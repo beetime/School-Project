@@ -1,7 +1,7 @@
 FROM jenkins/jenkins:lts
 
 USER root
-RUN apt-get update && apt-get install -y git
+
 RUN apt-get update || true \
     && apt-get install -y tzdata \
     && ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime \
