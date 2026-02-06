@@ -10,6 +10,16 @@ pipeline {
     }
 
     stages {
+        stage('Checkout code') {
+            steps {
+      
+                checkout([$class: 'GitSCM', 
+                          branches: [[name: '*/main']], 
+                          userRemoteConfigs: [[url: 'git@github.com:beetime/School-Project.git',
+                                               credentialsId: 'github-ssh']]])
+            }
+        }
+
         stage('Run selected file') {
             steps {
                 script {
@@ -27,7 +37,6 @@ pipeline {
 
     post {
         always {
-        
             emailext(
                 subject: "Jenkins Build Result: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: "Pipeline finished!\nUser selected language: ${params.LANGUAGE}\nCheck console output: ${env.BUILD_URL}",
