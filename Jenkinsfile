@@ -5,23 +5,34 @@ pipeline {
         choice(
             name: 'LANGUAGE',
             choices: ['JAVA', 'PYTHON', 'C', 'ALL'],
-            description: 'Choose language'
+            description: 'Choose language to run'
         )
     }
 
     stages {
-        stage('Print Selection') {
+        stage('Run selected file') {
             steps {
                 script {
+                    echo "User selected: ${params.LANGUAGE}"
+
                     if (params.LANGUAGE == 'ALL') {
-                        sh 'cat JAVA'
-                        sh 'cat PYTHON'
-                        sh 'cat C'
+                        sh 'cat JAVA PYTHON C'
                     } else {
                         sh "cat ${params.LANGUAGE}"
                     }
                 }
             }
+        }
+    }
+
+    post {
+        always {
+        
+            emailext(
+                subject: "Jenkins Build Result: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: "Pipeline finished!\nUser selected language: ${params.LANGUAGE}\nCheck console output: ${env.BUILD_URL}",
+                to: "maya@example.com"
+            )
         }
     }
 }
